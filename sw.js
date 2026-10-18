@@ -1,4 +1,4 @@
-const CACHE = 'prism-v2';
+const CACHE = 'noodle-v1';
 const ASSETS = ['./', './index.html', './style.css', './app.js', './music.mjs', './manifest.json', './icon.svg'];
 const APP_URLS = new Set(ASSETS.map(path => new URL(path, self.registration.scope).href));
 self.addEventListener('install', event => {
@@ -9,7 +9,7 @@ self.addEventListener('message', event => {
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(names =>
-    Promise.all(names.filter(name => name.startsWith('prism-') && name !== CACHE).map(name => caches.delete(name)))
+    Promise.all(names.filter(name => (name.startsWith('prism-') || name.startsWith('noodle-')) && name !== CACHE).map(name => caches.delete(name)))
   ).then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', event => {

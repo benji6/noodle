@@ -1,6 +1,6 @@
 {
-  "name": "Prism Touch Synth",
-  "short_name": "Prism",
+  "name": "noodle — Pocket Instrument",
+  "short_name": "noodle",
   "description": "An expressive pocket instrument with unique-note pads, four sounds and a phrase looper.",
   "start_url": "./",
   "display": "standalone",

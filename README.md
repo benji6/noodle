@@ -1,4 +1,4 @@
-# Prism
+# noodle
 
 A mobile-first, scale-locked instrument built with Web Audio. No build step or runtime dependencies.
 
@@ -27,7 +27,7 @@ Record audio in Settings captures the instrument's stereo output, including effe
 
 The engine uses 16 pooled voices with shared reverb and delay. Loop and arpeggiator playback are scheduled against the audio clock with a short lookahead; no continuous visual animation loop runs when idle. After six idle seconds (allowing effects to decay), the audio context suspends until the next interaction. Under heavy polyphony, live touches can steal the oldest voice; background notes that exceed capacity are skipped with a visible warning.
 
-After a first successful load, the service worker caches the application for offline use. Future releases must bump the `CACHE` version in `sw.js`. An available update is applied only after choosing the update button; old Prism caches are then removed.
+After a first successful load, the service worker caches the application for offline use. Future releases must bump the `CACHE` version in `sw.js`. An available update is applied only after choosing the update button; old application caches are then removed.
 
 ## Checks
 

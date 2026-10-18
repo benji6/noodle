@@ -5,7 +5,7 @@ const value = id => $(id).value;
 const number = id => Number(value(id));
 const status = message => {
   $('status').textContent = storageWarning && !message.includes('storage') ?
-    `${message} Device storage is unavailable; changes may not survive closing Prism.` : message;
+    `${message} Device storage is unavailable; changes may not survive closing noodle.` : message;
 };
 const fingers = new Map();
 const latched = new Map();
@@ -25,7 +25,7 @@ const pendingCapture = new Map();
 KEYS.forEach((key, i) => $('key').add(new Option(key, i, i === 9, i === 9)));
 
 function storageError(error) {
-  console.error('Prism storage:', error);
+  console.error('noodle storage:', error);
   storageWarning = true;
   status('Device storage unavailable. Changes will only last for this session.');
 }
@@ -186,8 +186,8 @@ async function ready() {
     if (ctx.state !== 'running') throw new Error('Audio could not resume');
     return true;
   } catch (error) {
-    console.error('Prism audio:', error);
-    status('Audio unavailable. Try reopening Prism and touching a pad.');
+    console.error('noodle audio:', error);
+    status('Audio unavailable. Try reopening noodle and touching a pad.');
     return false;
   }
 }
@@ -387,8 +387,8 @@ function stopIdleScheduler() {
       idleTimer = null;
       if (!playing && !take && !fingers.size && !latched.size && recorder?.state !== 'recording') {
         ctx.suspend().catch(error => {
-          console.error('Prism audio suspension:', error);
-          status('Could not pause idle audio. Close Prism to stop audio processing.');
+          console.error('noodle audio suspension:', error);
+          status('Could not pause idle audio. Close noodle to stop audio processing.');
         });
       }
     }, 6000);
@@ -690,7 +690,7 @@ $('tilt').onchange = async () => {
     window.addEventListener('deviceorientation', onTilt, { passive: true });
     status('Tilt enabled. Return Tilt to Off to reset the sound.');
   } catch (error) {
-    console.error('Prism tilt:', error);
+    console.error('noodle tilt:', error);
     $('tilt').value = 'off';
     status('Tilt unavailable or permission denied. Finger expression still works.');
   }
@@ -708,7 +708,7 @@ $('capture').onclick = async () => {
     recordingChunks = [];
     recorder.ondataavailable = event => { if (event.data.size) recordingChunks.push(event.data); };
     recorder.onerror = event => {
-      console.error('Prism recording:', event.error);
+      console.error('noodle recording:', event.error);
       status('Audio recording failed. Your loop is still saved locally.');
       $('capture').textContent = 'Record audio';
     };
@@ -719,7 +719,7 @@ $('capture').onclick = async () => {
       const type = recorder.mimeType;
       downloadUrl = URL.createObjectURL(new Blob(recordingChunks, { type }));
       $('download').href = downloadUrl;
-      $('download').download = `prism-${new Date().toISOString().slice(0, 10)}.${type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm'}`;
+      $('download').download = `noodle-${new Date().toISOString().slice(0, 10)}.${type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm'}`;
       $('download').hidden = false;
       status('Recording ready. Open Settings and choose Save recording.');
       stopIdleScheduler();
@@ -728,7 +728,7 @@ $('capture').onclick = async () => {
     $('capture').textContent = 'Stop audio recording';
     status('Recording audio. Close Settings and play; reopen to stop and save.');
   } catch (error) {
-    console.error('Prism recording:', error);
+    console.error('noodle recording:', error);
     status('Could not start audio recording in this browser.');
   }
 };
@@ -780,7 +780,7 @@ if ('serviceWorker' in navigator) {
       registration.installing?.addEventListener('statechange', offerUpdate);
     });
   }).catch(error => {
-    console.error('Prism offline:', error);
-    status('Offline setup failed. Prism is playable while connected.');
+    console.error('noodle offline:', error);
+    status('Offline setup failed. noodle is playable while connected.');
   });
 }

@@ -15,7 +15,7 @@ const server = createServer(async (req, res) => {
     res.setHeader('Content-Type', mime[extname(path)] || 'application/octet-stream');
     let data = await readFile(path);
     if (updateWorker && path === resolve(root, 'sw.js')) {
-      data = data.toString().replace(/const CACHE = '[^']+';/, "const CACHE = 'prism-browser-update';");
+      data = data.toString().replace(/const CACHE = '[^']+';/, "const CACHE = 'noodle-browser-update';");
     }
     res.end(data);
   } catch { res.writeHead(404).end(); }
@@ -186,7 +186,7 @@ try {
   await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
   await page.waitForFunction(() => !document.querySelector('#update').hidden);
   await page.locator('#update').tap();
-  await page.waitForFunction(async () => (await caches.keys()).includes('prism-browser-update') &&
+  await page.waitForFunction(async () => (await caches.keys()).includes('noodle-browser-update') &&
     document.querySelectorAll('.key').length === 15 && document.querySelector('#update').hidden);
   assert.equal(await page.evaluate(async () => (await caches.keys()).some(key => key === 'prism-v2')), false);
   console.log('PASS explicit update activation and old-cache cleanup');
