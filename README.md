@@ -1,5 +1,7 @@
 # noodle
 
+[Try noodle](https://benji6.github.io/noodle)
+
 A mobile-first, scale-locked instrument built with Web Audio. No build step or runtime dependencies.
 
 Serve this directory over HTTPS (or localhost for development), then open `index.html`. For example, `python3 -m http.server 8000`. HTTPS is required for installed/offline use and motion permissions.
