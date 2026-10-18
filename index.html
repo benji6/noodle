@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Prism">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+  <title>Prism — Pocket Instrument</title>
+</head>
+<body>
+<main id="app">
+  <header>
+    <h1>Prism<span>Pocket instrument</span></h1>
+    <label class="sr-only" for="preset">Sound</label>
+    <select id="preset"><option value="glass">Glass</option><option value="ember">Ember</option><option value="drift">Drift</option><option value="wire">Wire</option></select>
+    <button id="settings" aria-haspopup="dialog">Settings</button>
+  </header>
+  <div class="performance">
+    <button id="octave-down" aria-label="Lower octave">Oct −</button>
+    <output id="register" aria-live="polite"></output>
+    <button id="octave-up" aria-label="Higher octave">Oct +</button>
+    <button id="hold" aria-pressed="false">Hold</button>
+    <button id="panic" aria-label="Release all notes and stop playback">Release all</button>
+  </div>
+  <div class="macros">
+    <label>Tone <input id="tone" type="range" min="0" max="1" step=".01" value=".55"></label>
+    <label>Space <input id="space" type="range" min="0" max="1" step=".01" value=".3"></label>
+  </div>
+  <section id="grid" aria-label="15 unique notes, ascending left to right, then top to bottom"></section>
+  <footer>
+    <div class="transport" aria-label="Phrase looper">
+      <button id="record">Record loop</button>
+      <button id="play" disabled>Play</button>
+      <button id="undo" disabled>Undo</button>
+      <button id="clear" disabled>Clear</button>
+    </div>
+    <progress id="progress" max="1" value="0" aria-label="Loop position"></progress>
+    <div id="status" role="status">Touch to play. Slide up a pad for more colour.</div>
+    <button id="update" hidden>Update available · reload</button>
+  </footer>
+</main>
+<dialog id="panel" aria-labelledby="panel-title">
+  <div class="panel-heading"><h2 id="panel-title">Shape your instrument</h2><button id="close">Done</button></div>
+  <div class="settings-grid">
+    <label>Key <select id="key"></select></label>
+    <label>Scale <select id="scale"><option value="minor">Minor pentatonic</option><option value="major">Major pentatonic</option><option value="dorian">Dorian</option><option value="blues">Blues</option></select></label>
+    <label>Slide <select id="slide"><option value="steps">Stepped notes</option><option value="glide">Continuous glide</option></select></label>
+    <label>Arpeggiator <select id="arp"><option value="off">Off</option><option value="up">Up</option><option value="down">Down</option><option value="bounce">Bounce</option></select></label>
+    <label>Attack <input id="attack" type="range" min=".005" max=".8" step=".005" value=".008"></label>
+    <label>Release <input id="release" type="range" min=".04" max="2" step=".01" value=".65"></label>
+    <label>Tempo <input id="tempo" type="number" min="50" max="180" step="1" value="96" inputmode="numeric"></label>
+    <label>Loop length <select id="bars"><option value="1">1 bar</option><option value="2" selected>2 bars</option><option value="4">4 bars</option></select></label>
+    <label>Timing <select id="quantize"><option value="off">Free</option><option value="on">Snap to 1/16</option></select></label>
+    <label class="check"><input id="metronome" type="checkbox"> Metronome</label>
+    <label>Volume <input id="volume" type="range" min="0" max=".85" step=".01" value=".6"></label>
+    <label>Tilt <select id="tilt"><option value="off">Off</option><option value="filter">Tone</option><option value="detune">Pitch shimmer</option></select></label>
+  </div>
+  <div class="panel-actions">
+    <button id="surprise">Surprise sound</button>
+    <button id="capture">Record audio</button>
+    <a id="download" hidden>Save recording</a>
+  </div>
+  <p>Hold latches notes; tap a held pad to release it. Release all also stops the loop. The arpeggiator plays held or fingered notes at eighth-note speed.</p>
+  <p>Record captures a fixed phrase, then repeats it. Overdub starts at the next loop boundary. Undo removes the last take. Loops keep their original sound and tempo; clear the loop to change its tempo or length.</p>
+  <p>15 different pitches, no duplicate pads. Root notes glow blue. Octave buttons shift the range; rotation keeps the same pitches. Settings and your last loop stay on this device.</p>
+</dialog>
+<script type="module" src="app.js"></script>
+</body>
+</html>
