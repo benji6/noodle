@@ -7,16 +7,12 @@ import assert from 'node:assert/strict';
 
 const root = fileURLToPath(new URL('../', import.meta.url)).replace(/\/$/, '');
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml' };
-let updateWorker = false;
 const server = createServer(async (req, res) => {
   const path = resolve(root, '.' + new URL(req.url, 'http://localhost').pathname.replace(/\/$/, '/index.html'));
   if (!path.startsWith(root + '/')) { res.writeHead(403).end(); return; }
   try {
     res.setHeader('Content-Type', mime[extname(path)] || 'application/octet-stream');
-    let data = await readFile(path);
-    if (updateWorker && path === resolve(root, 'sw.js')) {
-      data = data.toString().replace(/const CACHE = '[^']+';/, "const CACHE = 'noodle-browser-update';");
-    }
+    const data = await readFile(path);
     res.end(data);
   } catch { res.writeHead(404).end(); }
 });
@@ -96,6 +92,7 @@ try {
   await page.locator('#tempo').dispatchEvent('change');
   await page.locator('#bars').selectOption('1');
   await page.locator('#close').tap();
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('noodle-settings-v2')).tempo), '180');
   await page.locator('.key').first().tap();
   assert.ok(await page.evaluate(() => __audioCalls.some(c => c[0] === 'target' && c[1] === 0 && Math.abs(c[3] - .3) < .00001)));
   console.log('PASS latch toggle and release envelope');
@@ -123,7 +120,7 @@ try {
   await page.waitForTimeout(150);
   await page.locator('.key').nth(5).tap();
   await page.waitForTimeout(1250);
-  let saved = await page.evaluate(() => JSON.parse(localStorage.getItem('prism-loop-v1')));
+  let saved = await page.evaluate(() => JSON.parse(localStorage.getItem('noodle-loop-v1')));
   assert.ok(saved.notes.length >= 2, JSON.stringify(saved));
   assert.equal(saved.tempo, 180);
   assert.equal(saved.bars, 1);
@@ -133,14 +130,14 @@ try {
   await page.waitForFunction(() => document.querySelector('#record').textContent === 'Finish take');
   await page.locator('.key').nth(8).tap();
   await page.waitForTimeout(1450);
-  saved = await page.evaluate(() => JSON.parse(localStorage.getItem('prism-loop-v1')));
+  saved = await page.evaluate(() => JSON.parse(localStorage.getItem('noodle-loop-v1')));
   assert.ok(saved.notes.length > firstCount);
   await page.locator('#undo').tap();
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('prism-loop-v1')).notes.length), firstCount);
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('noodle-loop-v1')).notes.length), firstCount);
   await page.locator('#clear').tap();
-  assert.equal(await page.evaluate(() => localStorage.getItem('prism-loop-v1')), null);
+  assert.equal(await page.evaluate(() => localStorage.getItem('noodle-loop-v1')), null);
   await page.locator('#undo').tap();
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('prism-loop-v1')).notes.length), firstCount);
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('noodle-loop-v1')).notes.length), firstCount);
   console.log('PASS recording, overdub, undo and clear/restore');
 
   await page.reload();
@@ -173,23 +170,8 @@ try {
   await page.waitForFunction(() => __audio.state === 'running');
   console.log('PASS idle audio suspension and touch resume');
 
-  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
-  await page.reload();
-  await page.waitForFunction(() => navigator.serviceWorker.controller);
-  await context.setOffline(true);
-  await page.reload();
-  await page.waitForFunction(() => document.querySelectorAll('.key').length === 15);
-  assert.equal(await page.locator('.key').count(), 15);
-  await context.setOffline(false);
-  console.log('PASS offline reload');
-  updateWorker = true;
-  await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
-  await page.waitForFunction(() => !document.querySelector('#update').hidden);
-  await page.locator('#update').tap();
-  await page.waitForFunction(async () => (await caches.keys()).includes('noodle-browser-update') &&
-    document.querySelectorAll('.key').length === 15 && document.querySelector('#update').hidden);
-  assert.equal(await page.evaluate(async () => (await caches.keys()).some(key => key === 'prism-v2')), false);
-  console.log('PASS explicit update activation and old-cache cleanup');
+  assert.equal(await page.evaluate(async () => (await navigator.serviceWorker.getRegistrations()).length), 0);
+  console.log('PASS no service worker registered');
   assert.deepEqual(errors, []);
   console.log('PASS no uncaught browser errors');
   await context.close();

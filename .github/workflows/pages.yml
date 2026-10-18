@@ -43,7 +43,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir _site
-          cp index.html app.js music.mjs style.css sw.js manifest.json icon.svg _site/
+          cp index.html app.js music.mjs style.css manifest.json icon.svg _site/
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site

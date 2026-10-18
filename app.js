@@ -11,8 +11,8 @@ const fingers = new Map();
 const latched = new Map();
 const voices = [];
 const pads = [];
-const SETTINGS_KEY = 'prism-settings-v2';
-const LOOP_KEY = 'prism-loop-v1';
+const SETTINGS_KEY = 'noodle-settings-v2';
+const LOOP_KEY = 'noodle-loop-v1';
 const settingIds = ['preset', 'key', 'scale', 'slide', 'arp', 'attack', 'release', 'tone', 'space', 'tempo', 'bars', 'quantize', 'volume'];
 let octave = 0, currentTempo = 96, hold = false, ctx, bus, master, wet, echo, delay, output, stream;
 let loop = null, undo = null, playing = false, origin = 0, take = null;
@@ -758,29 +758,3 @@ measure();
 updateTransport();
 if (loop && !storageWarning) status('Your last loop is ready. Press Play, or touch to explore.');
 if (!window.MediaRecorder) $('capture').textContent = 'Audio export unavailable';
-
-if ('serviceWorker' in navigator) {
-  let worker;
-  $('update').onclick = () => {
-    interrupt();
-    worker?.postMessage('activate');
-  };
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (worker && !reloading) { reloading = true; location.reload(); }
-  });
-  navigator.serviceWorker.register('./sw.js').then(registration => {
-    const offerUpdate = () => {
-      if (!registration.waiting || !navigator.serviceWorker.controller) return;
-      worker = registration.waiting;
-      $('update').hidden = false;
-    };
-    offerUpdate();
-    registration.addEventListener('updatefound', () => {
-      registration.installing?.addEventListener('statechange', offerUpdate);
-    });
-  }).catch(error => {
-    console.error('noodle offline:', error);
-    status('Offline setup failed. noodle is playable while connected.');
-  });
-}
