@@ -36,3 +36,7 @@ Run `node --test tests/*.test.mjs` and `node --check app.js`. No package install
 The optional `node tests/browser.mjs` suite exercises mobile layouts, multitouch, audio, looping, export and offline launch in Chromium. It requires Playwright and its Chromium browser; `PLAYWRIGHT_MODULE` can point to an external installation's `index.mjs` so the app itself needs no dependencies.
 
 Before a release, check real iPhone Safari and mid-range Android devices, both installed and in-browser: first-touch latency, ten-finger slides, overlapping touches on one pad, voice stealing, portrait/landscape rotation, lock/unlock, interrupted takes, offline launch/update, audio export, and heat/battery usage during sustained playback. Desktop browser checks cannot establish physical-device audio latency or battery performance.
+
+## GitHub Pages
+
+In the repository's **Settings > Pages**, select **GitHub Actions** as the build and deployment source. The Pages workflow runs the dependency-free tests and application syntax check on pull requests and pushes to `main`. After successful checks on `main`, it publishes only the application's static files to GitHub Pages. It can also be run manually on `main` from the Actions tab. The optional Playwright suite is not run by this workflow.
